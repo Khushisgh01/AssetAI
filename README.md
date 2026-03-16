@@ -1,70 +1,137 @@
-# Getting Started with Create React App
+# ⚡ Asset Price Predictor AI
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern, animated React frontend for an AI-powered asset price prediction platform.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🚀 Setup Instructions (Step by Step)
 
-### `npm start`
+### Prerequisites
+Make sure you have installed:
+- **Node.js** v16+ → https://nodejs.org
+- **npm** (comes with Node)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Check versions:
+```bash
+node -v
+npm -v
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+### Step 1: Create the project folder
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+You already have all the files. Just place them in a folder called `asset-price-predictor/`.
 
-### `npm run build`
+Or clone/download them into that folder.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Step 2: Install dependencies
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Open a terminal in the project root folder and run:
 
-### `npm run eject`
+```bash
+npm install
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+This will install:
+- React 18
+- Material UI (MUI v5)
+- GSAP (animations)
+- Three.js + React Three Fiber (3D hero)
+- Recharts (market charts)
+- react-intersection-observer
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Step 3: Start the development server
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npm start
+```
 
-## Learn More
+The app will open at → **http://localhost:3000**
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Step 4: Build for production
 
-### Code Splitting
+```bash
+npm run build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Output goes to the `build/` folder, ready for deployment on Vercel, Netlify, etc.
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 📁 Project Structure
 
-### Making a Progressive Web App
+```
+asset-price-predictor/
+│
+├── public/
+│   └── index.html               # HTML shell with Google Fonts
+│
+├── src/
+│   ├── index.js                 # React root entry
+│   ├── App.js                   # Main app with page routing
+│   │
+│   ├── components/
+│   │   ├── Navbar.js            # Sticky nav with GSAP hover underlines
+│   │   ├── HeroSection.js       # Hero with 3D Three.js + particle canvas
+│   │   ├── CategoriesSection.js # 8 animated prediction category cards
+│   │   ├── HowItWorksSection.js # 3-step workflow with scroll animations
+│   │   ├── MarketInsightsSection.js  # Interactive Recharts graphs
+│   │   └── Footer.js            # Footer with social links
+│   │
+│   ├── pages/
+│   │   └── PredictionPage.js    # Full prediction form + animated result
+│   │
+│   └── data/
+│       └── categories.js        # All 8 asset category configs & form fields
+│
+├── package.json
+└── README.md
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+## 🎨 Tech Stack
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+| Technology | Purpose |
+|---|---|
+| React 18 (JS) | Core framework |
+| Material UI v5 | Component library |
+| GSAP 3 | All animations |
+| Three.js / R3F | 3D floating icons in hero |
+| Recharts | Market insight charts |
+| react-intersection-observer | Scroll-triggered reveals |
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## ✨ Features
 
-### `npm run build` fails to minify
+- **Hero Section** — Animated 3D floating cubes, particle network, gradient text shimmer
+- **8 Category Cards** — Tilt-on-hover 3D effect, staggered scroll reveals
+- **How It Works** — Alternating slide-in steps with scroll triggers
+- **Market Insights** — Switchable Area/Line charts (Car, House, Gold)
+- **Prediction Form** — Per-category dynamic fields, animated loading bar, price counter animation
+- **Navbar** — GSAP underline hover effect, mobile drawer
+- **Footer** — Social icons, animated reveal
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+## 🎯 Adding a Backend
+
+To connect a real ML backend, replace the `simulatePrediction()` function in `src/pages/PredictionPage.js` with an API call:
+
+```javascript
+const response = await fetch('https://your-api.com/predict', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ category: category.id, ...formData }),
+});
+const data = await response.json();
+setResult(data);
+```
