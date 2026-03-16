@@ -9,8 +9,7 @@ import { gsap } from 'gsap';
 import { useInView } from 'react-intersection-observer';
 
 const skills = [
-  'Machine Learning', 'Python', 'React.js', 'Data Science',
-  'Artificial Intelligence', 'JavaScript', 'Deep Learning', 'Node.js',
+  'Machine Learning', 'Python', 'React.js', 'Data Science', 'JavaScript', 'Express.js', 'Node.js',
 ];
 
 const highlights = [
@@ -206,7 +205,7 @@ export default function AboutSection() {
               }}>
                 <Typography sx={{ fontSize: '1rem' }}>🤖</Typography>
                 <Typography sx={{ fontSize: '0.72rem', color: '#06b6d4', fontWeight: 700 }}>
-                  AI Specialist
+                  CSEAI'28
                 </Typography>
               </Box>
             </Box>
