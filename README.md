@@ -1,137 +1,185 @@
-# ⚡ Asset Price Predictor AI
-
-A modern, animated React frontend for an AI-powered asset price prediction platform.
-
----
-
-## 🚀 Setup Instructions (Step by Step)
-
-### Prerequisites
-Make sure you have installed:
-- **Node.js** v16+ → https://nodejs.org
-- **npm** (comes with Node)
-
-Check versions:
-```bash
-node -v
-npm -v
-```
+# AssetAI – Full-Stack Setup Guide
+### ML-powered price predictor for Cars, Bikes, Houses, Plots, Gold, Silver, Platinum & Rentals
 
 ---
 
-### Step 1: Create the project folder
-
-You already have all the files. Just place them in a folder called `asset-price-predictor/`.
-
-Or clone/download them into that folder.
-
----
-
-### Step 2: Install dependencies
-
-Open a terminal in the project root folder and run:
-
-```bash
-npm install
-```
-
-This will install:
-- React 18
-- Material UI (MUI v5)
-- GSAP (animations)
-- Three.js + React Three Fiber (3D hero)
-- Recharts (market charts)
-- react-intersection-observer
-
----
-
-### Step 3: Start the development server
-
-```bash
-npm start
-```
-
-The app will open at → **http://localhost:3000**
-
----
-
-### Step 4: Build for production
-
-```bash
-npm run build
-```
-
-Output goes to the `build/` folder, ready for deployment on Vercel, Netlify, etc.
-
----
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 asset-price-predictor/
-│
-├── public/
-│   └── index.html               # HTML shell with Google Fonts
-│
+├── backend/
+│   ├── app.py                    ← Flask API (NEW)
+│   ├── requirements.txt          ← Python deps (NEW)
+│   ├── data/                     ← Download datasets here (see Step 2)
+│   │   ├── HousePricePrediction.csv    ← your uploaded file
+│   │   ├── vehicle_dataset.csv
+│   │   ├── bike_details.csv
+│   │   ├── gold_price_data.csv
+│   │   ├── House_Rent_Dataset.csv
+│   │   ├── india_house_price.csv
+│   │   └── platinum_price_data.csv    (optional)
+│   ├── models/                   ← Auto-created on first run
+│   └── predictors/
+│       ├── __init__.py
+│       ├── house_predictor.py    ← uses YOUR notebook's logic
+│       ├── car_predictor.py
+│       ├── bike_predictor.py
+│       ├── gold_predictor.py
+│       ├── silver_predictor.py
+│       ├── platinum_predictor.py
+│       ├── plot_predictor.py
+│       └── rental_predictor.py
 ├── src/
-│   ├── index.js                 # React root entry
-│   ├── App.js                   # Main app with page routing
-│   │
-│   ├── components/
-│   │   ├── Navbar.js            # Sticky nav with GSAP hover underlines
-│   │   ├── HeroSection.js       # Hero with 3D Three.js + particle canvas
-│   │   ├── CategoriesSection.js # 8 animated prediction category cards
-│   │   ├── HowItWorksSection.js # 3-step workflow with scroll animations
-│   │   ├── MarketInsightsSection.js  # Interactive Recharts graphs
-│   │   └── Footer.js            # Footer with social links
-│   │
-│   ├── pages/
-│   │   └── PredictionPage.js    # Full prediction form + animated result
-│   │
-│   └── data/
-│       └── categories.js        # All 8 asset category configs & form fields
-│
-├── package.json
-└── README.md
+│   └── pages/
+│       └── PredictionPage.js     ← Updated (calls real API)
+└── ... (rest of React files unchanged)
 ```
 
 ---
 
-## 🎨 Tech Stack
+## Step 1 – Clone / Open the project
 
-| Technology | Purpose |
-|---|---|
-| React 18 (JS) | Core framework |
-| Material UI v5 | Component library |
-| GSAP 3 | All animations |
-| Three.js / R3F | 3D floating icons in hero |
-| Recharts | Market insight charts |
-| react-intersection-observer | Scroll-triggered reveals |
+Open your project folder in VS Code or any terminal.
 
 ---
 
-## ✨ Features
+## Step 2 – Download Datasets
 
-- **Hero Section** — Animated 3D floating cubes, particle network, gradient text shimmer
-- **8 Category Cards** — Tilt-on-hover 3D effect, staggered scroll reveals
-- **How It Works** — Alternating slide-in steps with scroll triggers
-- **Market Insights** — Switchable Area/Line charts (Car, House, Gold)
-- **Prediction Form** — Per-category dynamic fields, animated loading bar, price counter animation
-- **Navbar** — GSAP underline hover effect, mobile drawer
-- **Footer** — Social icons, animated reveal
+Download each CSV and place it in `backend/data/`:
+
+| Predictor   | Dataset Name                       | Kaggle URL                                                                                   |
+|-------------|-------------------------------------|----------------------------------------------------------------------------------------------|
+| **House**   | `HousePricePrediction.csv`          | ✅ Already uploaded by you – just copy to `backend/data/`                                    |
+| **Car**     | `vehicle_dataset.csv`               | https://www.kaggle.com/datasets/nehalbirla/vehicle-dataset-from-cardekho                    |
+| **Bike**    | `bike_details.csv`                  | https://www.kaggle.com/datasets/nehalbirla/motorcycle-dataset                               |
+| **Gold/Silver** | `gold_price_data.csv`           | https://www.kaggle.com/datasets/sid321axn/gold-price-prediction-dataset                     |
+| **Rental**  | `House_Rent_Dataset.csv`            | https://www.kaggle.com/datasets/iamsouravbanerjee/house-rent-prediction-dataset             |
+| **Plot**    | `india_house_price.csv`             | https://www.kaggle.com/datasets/ruchi798/housing-prices-in-metropolitan-areas-of-india      |
+| **Platinum**| `platinum_price_data.csv`           | https://www.kaggle.com/datasets/frtgnn/precious-metals-dataset *(optional – falls back to formula)* |
+
+> **Tip:** You need a free Kaggle account to download. Use `kaggle datasets download -d <path>` CLI or download via browser.
 
 ---
 
-## 🎯 Adding a Backend
+## Step 3 – Set Up Python Backend
 
-To connect a real ML backend, replace the `simulatePrediction()` function in `src/pages/PredictionPage.js` with an API call:
+### 3.1 – Create a virtual environment
 
-```javascript
-const response = await fetch('https://your-api.com/predict', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ category: category.id, ...formData }),
-});
-const data = await response.json();
-setResult(data);
+```bash
+cd backend
+python -m venv venv
 ```
+
+Activate it:
+- **Windows:**   `venv\Scripts\activate`
+- **Mac/Linux:** `source venv/bin/activate`
+
+### 3.2 – Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3.3 – Copy your dataset
+
+```bash
+# From project root:
+cp /path/to/HousePricePrediction.csv backend/data/
+# (and all other CSVs downloaded in Step 2)
+```
+
+### 3.4 – Run the Flask server
+
+```bash
+cd backend
+python app.py
+```
+
+You should see:
+```
+ * Running on http://127.0.0.1:5000
+```
+
+The **first run** will train and save all models automatically (may take ~30s). Subsequent runs load from disk instantly.
+
+---
+
+## Step 4 – Set Up React Frontend
+
+Open a **new terminal** (keep Flask running):
+
+```bash
+# From project root:
+npm install
+npm start
+```
+
+React opens at `http://localhost:3000`.
+
+---
+
+## Step 5 – How It Works (End to End)
+
+```
+User fills form  →  React PredictionPage.js
+    → POST http://localhost:5000/predict/{category}
+        → Flask app.py routes to correct predictor
+            → predictor loads model (trains if not cached)
+                → returns { price, low, high, confidence, model }
+    → React shows animated result card
+```
+
+---
+
+## Step 6 – Environment Variables (Optional)
+
+If your backend runs on a different port or URL (e.g. deployed):
+
+Create `.env` in the React root:
+```
+REACT_APP_API_URL=http://localhost:5000
+```
+
+---
+
+## Model Details
+
+| Category  | Dataset                        | Algorithm              | Features Used                              |
+|-----------|-------------------------------|------------------------|--------------------------------------------|
+| House     | Ames Housing (your notebook)  | Linear Regression      | LotArea, YearBuilt, OverallCond, Zoning…  |
+| Car       | CarDekho Vehicle Dataset      | Random Forest          | Year, km_driven, fuel, transmission, owner |
+| Bike      | Kaggle Bike Details           | Random Forest          | Year, km_driven, owner, ex_showroom_price  |
+| Gold      | Kaggle Gold Price Data        | Spot-price formula     | Weight × Purity × Form premium             |
+| Silver    | Same as Gold (SLV column)     | Linear Regression      | GLD → SLV ratio                            |
+| Platinum  | Precious Metals Dataset       | Spot-price formula     | Weight × Purity × Form premium             |
+| Plot      | India Housing (Metro areas)   | Random Forest          | Area, City, Zone, Road, Approval           |
+| Rental    | House Rent Dataset (India)    | Random Forest          | BHK, Area, Furnishing, City, Bathroom      |
+
+---
+
+## Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| `Cannot reach the backend` | Make sure Flask is running: `python app.py` in `backend/` |
+| `ModuleNotFoundError` | Run `pip install -r requirements.txt` inside virtualenv |
+| Model accuracy is low (house) | Your notebook uses ~37% R² with Linear Regression. Consider upgrading to `RandomForestRegressor` or `XGBRegressor` |
+| Dataset column error | Check your CSV column names match what the predictor expects (each predictor has a column-mapping section) |
+| CORS error | Flask already has `flask-cors` installed. Make sure `CORS(app)` is in `app.py` |
+
+---
+
+## Upgrading the House Model (Optional)
+
+In `house_predictor.py`, replace the `LinearRegression` model with:
+
+```python
+from sklearn.ensemble import GradientBoostingRegressor
+model = GradientBoostingRegressor(n_estimators=200, learning_rate=0.1, random_state=42)
+```
+
+This typically boosts R² from ~0.37 to ~0.85+.
+
+---
+
+Built with ⚡ React + MUI + GSAP + Flask + scikit-learn
