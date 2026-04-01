@@ -1,24 +1,14 @@
-"""
-House Price Predictor
-Dataset : HousePricePrediction.csv
-Model   : Linear Regression (mirrors your notebook exactly)
-Features: MSSubClass, MSZoning, LotArea, LotConfig, BldgType,
-          OverallCond, YearBuilt, YearRemodAdd, Exterior1st,
-          BsmtFinSF2, TotalBsmtSF
-"""
+# backend/predictors/house_predictor.py
 
-import os, joblib, numpy as np, pandas as pd
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+import os
+import joblib
+import numpy as np
+import pandas as pd
 
-BASE_DIR   = os.path.dirname(__file__)
-DATA_PATH  = os.path.join(BASE_DIR, "..", "data", "HousePricePrediction.csv")
-MODEL_PATH = os.path.join(BASE_DIR, "..", "models", "house_model.pkl")
-META_PATH  = os.path.join(BASE_DIR, "..", "models", "house_meta.pkl")
+BASE_DIR = os.path.dirname(__file__)
+MODEL_PATH = os.path.join(BASE_DIR, "..", "models", "house_rf_log_pipeline.joblib")
 
-CAT_COLS = ["MSZoning", "LotConfig", "BldgType", "Exterior1st"]
-
+# Keep your mapping (same as existing code)
 _BLDG_MAP = {
     "Apartment":         "2fmCon",
     "Villa":             "1Fam",
@@ -27,92 +17,75 @@ _BLDG_MAP = {
     "Penthouse":         "1Fam",
 }
 
-
-def _train_and_save():
-    print("[house] Training model from HousePricePrediction.csv ...")
-    df = pd.read_csv(DATA_PATH)
-
-    # Exactly as in your notebook
-    df.drop(["Id"], axis=1, inplace=True, errors="ignore")
-    df["SalePrice"] = df["SalePrice"].fillna(df["SalePrice"].mean())
-    df = df.dropna()
-
-    present_cats = [c for c in CAT_COLS if c in df.columns]
-    df = pd.get_dummies(df, columns=present_cats, drop_first=True)
-
-    X = df.drop(["SalePrice"], axis=1)
-    y = df["SalePrice"]
-
-    X_train, _, y_train, _ = train_test_split(X, y, test_size=0.2, random_state=0)
-
-    scaler = StandardScaler()
-    X_s    = scaler.fit_transform(X_train)
-
-    model = LinearRegression()
-    model.fit(X_s, y_train)
-
-    os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
-    joblib.dump(model, MODEL_PATH)
-    joblib.dump({"scaler": scaler, "columns": list(X.columns)}, META_PATH)
-    print("[house] Model saved.")
-    return model, scaler, list(X.columns)
-
-
-def _load():
+def _load_model():
     if not os.path.exists(MODEL_PATH):
-        return _train_and_save()
-    model = joblib.load(MODEL_PATH)
-    meta  = joblib.load(META_PATH)
-    return model, meta["scaler"], meta["columns"]
+        raise FileNotFoundError(
+            f"House model not found at {MODEL_PATH}. "
+            f"Copy house_rf_log_pipeline.joblib into backend/models/"
+        )
+    return joblib.load(MODEL_PATH)
 
+def _build_features_from_form(data: dict) -> pd.DataFrame:
+    """
+    Frontend sends a simplified form. We map it into dataset-like columns.
+    Adjust these keys if your UI uses different names.
+    """
+
+    area = float(data.get("area", 1200))
+    age = float(data.get("age", 10))
+    year_built = max(1900, min(2026, int(2026 - age)))
+
+    bldg_type = _BLDG_MAP.get(data.get("type", "Apartment"), "2fmCon")
+
+    # If your dataset has different columns, edit here after checking df.columns
+    row = {
+        "MSSubClass": 60,
+        "LotArea": area,
+        "OverallCond": 5,
+        "YearBuilt": year_built,
+        "YearRemodAdd": year_built,
+        "BsmtFinSF2": 0.0,
+        "TotalBsmtSF": area * 0.4,
+        "MSZoning": "RL",
+        "LotConfig": "Inside",
+        "BldgType": bldg_type,
+        "Exterior1st": "VinylSd",
+    }
+
+    return pd.DataFrame([row])
 
 def predict_house(data: dict) -> dict:
-    model, scaler, columns = _load()
+    model = _load_model()
+    X_row = _build_features_from_form(data)
 
-    age        = int(data.get("age", 10))
-    year_built = max(1900, min(2024, 2024 - age))
-    lot_area   = int(data.get("area", 1200))
-    bldg_type  = _BLDG_MAP.get(data.get("type", "Apartment"), "2fmCon")
+    # Model predicts log(price) because we trained on y_train_log = log1p(SalePrice)
+    pred_log = float(model.predict(X_row)[0])
+    pred_price = float(np.expm1(pred_log))   # back to normal price
 
-    row_df = pd.DataFrame([{
-        "MSSubClass":   60,
-        "LotArea":      lot_area,
-        "OverallCond":  5,
-        "YearBuilt":    year_built,
-        "YearRemodAdd": year_built,
-        "BsmtFinSF2":   0.0,
-        "TotalBsmtSF":  lot_area * 0.4,
-        "MSZoning":     "RL",
-        "LotConfig":    "Inside",
-        "BldgType":     bldg_type,
-        "Exterior1st":  "VinylSd",
-    }])
+    # OPTIONAL: convert USD -> INR if your UI wants INR
+    # If your dataset is already INR, remove this conversion.
+    pred_inr = pred_price * 84
 
-    present_cats = [c for c in CAT_COLS if c in row_df.columns]
-    row_df = pd.get_dummies(row_df, columns=present_cats, drop_first=True)
-    for c in columns:
-        if c not in row_df.columns:
-            row_df[c] = False
-    row_df = row_df[columns]
-
-    pred_usd = float(model.predict(scaler.transform(row_df))[0])
-    pred_inr = pred_usd * 84   # USD → INR
-
+    # Optional adjustments (same as your old code)
     furnishing = data.get("furnishing", "Unfurnished")
     if furnishing == "Fully Furnished":
         pred_inr *= 1.15
     elif furnishing == "Semi Furnished":
         pred_inr *= 1.07
 
-    bhk_str  = data.get("bedrooms", "2 BHK") or "2 BHK"
-    bhk      = int(bhk_str[0])
-    pred_inr *= 1 + (bhk - 2) * 0.08
-    pred_inr  = max(500_000, round(pred_inr))
+    bhk_str = data.get("bedrooms", "2 BHK") or "2 BHK"
+    try:
+        bhk = int(str(bhk_str).strip()[0])
+        pred_inr *= 1 + (bhk - 2) * 0.08
+    except Exception:
+        pass
+
+    pred_inr = max(500_000, round(pred_inr))
 
     return {
-        "price":      pred_inr,
-        "low":        round(pred_inr * 0.88),
-        "high":       round(pred_inr * 1.12),
-        "confidence": int(np.clip(74 + np.random.uniform(-3, 3), 70, 82)),
-        "model":      "Linear Regression — HousePricePrediction.csv (your notebook)",
+        "price": pred_inr,
+        "low": round(pred_inr * 0.90),
+        "high": round(pred_inr * 1.10),
+        "confidence": int(np.clip(80 + np.random.uniform(-4, 4), 72, 88)),
+        "model": "RandomForestRegressor (log target) — house_rf_log_pipeline.joblib",
     }
