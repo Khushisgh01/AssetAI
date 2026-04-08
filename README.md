@@ -1,5 +1,6 @@
 # AssetAI 
 ### ML-powered price predictor for Cars, Bikes, Houses, Plots, Gold, Silver, Platinum & Rentals
+#### Frontend Deployed Link:https://asset-ai-bay.vercel.app/
 <img width="1814" height="725" alt="image" src="https://github.com/user-attachments/assets/e270ccde-4b68-4744-bb29-fd4c5359dcca" />
 
 ---
