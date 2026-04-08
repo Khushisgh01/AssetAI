@@ -41,23 +41,6 @@ asset-price-predictor/
 
 Open your project folder in VS Code or any terminal.
 
----
-
-## Step 2 – Download Datasets
-
-Download each CSV and place it in `backend/data/`:
-
-| Predictor   | Dataset Name                       | Kaggle URL                                                                                   |
-|-------------|-------------------------------------|----------------------------------------------------------------------------------------------|
-| **House**   | `HousePricePrediction.csv`          | ✅ Already uploaded by you – just copy to `backend/data/`                                    |
-| **Car**     | `vehicle_dataset.csv`               | https://www.kaggle.com/datasets/nehalbirla/vehicle-dataset-from-cardekho                    |
-| **Bike**    | `bike_details.csv`                  | https://www.kaggle.com/datasets/nehalbirla/motorcycle-dataset                               |
-| **Gold/Silver** | `gold_price_data.csv`           | https://www.kaggle.com/datasets/sid321axn/gold-price-prediction-dataset                     |
-| **Rental**  | `House_Rent_Dataset.csv`            | https://www.kaggle.com/datasets/iamsouravbanerjee/house-rent-prediction-dataset             |
-| **Plot**    | `india_house_price.csv`             | https://www.kaggle.com/datasets/ruchi798/housing-prices-in-metropolitan-areas-of-india      |
-| **Platinum**| `platinum_price_data.csv`           | https://www.kaggle.com/datasets/frtgnn/precious-metals-dataset *(optional – falls back to formula)* |
-
-> **Tip:** You need a free Kaggle account to download. Use `kaggle datasets download -d <path>` CLI or download via browser.
 
 ---
 
@@ -155,31 +138,5 @@ REACT_APP_API_URL=http://localhost:5000
 | Plot      | India Housing (Metro areas)   | Random Forest          | Area, City, Zone, Road, Approval           |
 | Rental    | House Rent Dataset (India)    | Random Forest          | BHK, Area, Furnishing, City, Bathroom      |
 
----
-
-## Troubleshooting
-
-| Problem | Fix |
-|---------|-----|
-| `Cannot reach the backend` | Make sure Flask is running: `python app.py` in `backend/` |
-| `ModuleNotFoundError` | Run `pip install -r requirements.txt` inside virtualenv |
-| Model accuracy is low (house) | Your notebook uses ~37% R² with Linear Regression. Consider upgrading to `RandomForestRegressor` or `XGBRegressor` |
-| Dataset column error | Check your CSV column names match what the predictor expects (each predictor has a column-mapping section) |
-| CORS error | Flask already has `flask-cors` installed. Make sure `CORS(app)` is in `app.py` |
-
----
-
-## Upgrading the House Model (Optional)
-
-In `house_predictor.py`, replace the `LinearRegression` model with:
-
-```python
-from sklearn.ensemble import GradientBoostingRegressor
-model = GradientBoostingRegressor(n_estimators=200, learning_rate=0.1, random_state=42)
-```
-
-This typically boosts R² from ~0.37 to ~0.85+.
-
----
 
 Built with ⚡ React + MUI + GSAP + Flask + scikit-learn
