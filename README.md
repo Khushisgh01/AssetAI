@@ -1,5 +1,6 @@
 # AssetAI 
 ### ML-powered price predictor for Cars, Bikes, Houses, Plots, Gold, Silver, Platinum & Rentals
+<img width="1814" height="725" alt="image" src="https://github.com/user-attachments/assets/e270ccde-4b68-4744-bb29-fd4c5359dcca" />
 
 ---
 
@@ -140,3 +141,4 @@ REACT_APP_API_URL=http://localhost:5000
 
 
 Built with ⚡ React + MUI + GSAP + Flask + scikit-learn
+Built by:<img width="1739" height="749" alt="image" src="https://github.com/user-attachments/assets/40c3fc6b-166b-4b87-9b24-b5c91e15649c" />
