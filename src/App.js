@@ -75,7 +75,7 @@ export default function App() {
           }} />
           <CategoriesSection onPredictNow={handlePredictNow} />
           <HowItWorksSection />
-          <MarketInsightsSection />
+          {/* <MarketInsightsSection /> */}
           <AboutSection />
           <Footer />
         </>

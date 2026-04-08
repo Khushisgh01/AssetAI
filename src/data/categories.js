@@ -44,14 +44,56 @@ export const categories = [
     color: '#10b981',
     gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
     description: 'Get accurate residential property valuations based on location, size, and amenities.',
+    // ── Fields match your LightGBM model's inputs exactly ──
     fields: [
-      { name: 'location', label: 'City / Location', type: 'text', placeholder: 'e.g. Mumbai, Bandra' },
-      { name: 'area', label: 'Built-up Area (sq ft)', type: 'number', placeholder: '1200' },
-      { name: 'bedrooms', label: 'Bedrooms (BHK)', type: 'select', options: ['1 BHK','2 BHK','3 BHK','4 BHK','5+ BHK'] },
-      { name: 'bathrooms', label: 'Bathrooms', type: 'number', placeholder: '2' },
-      { name: 'age', label: 'Property Age (years)', type: 'number', placeholder: '5' },
-      { name: 'type', label: 'Property Type', type: 'select', options: ['Apartment','Villa','Independent House','Duplex','Penthouse'] },
-      { name: 'furnishing', label: 'Furnishing', type: 'select', options: ['Fully Furnished','Semi Furnished','Unfurnished'] },
+      {
+        name: 'location',
+        label: 'Locality (Bengaluru)',
+        type: 'text',
+        placeholder: 'e.g. Whitefield, Koramangala, Indiranagar',
+      },
+      {
+        name: 'area',
+        label: 'Total Area (sq ft)',
+        type: 'number',
+        placeholder: '1200',
+      },
+      {
+        name: 'bedrooms',
+        label: 'BHK',
+        type: 'select',
+        options: ['1 BHK', '2 BHK', '3 BHK', '4 BHK', '5 BHK'],
+      },
+      {
+        name: 'bathrooms',
+        label: 'Bathrooms',
+        type: 'number',
+        placeholder: '2',
+      },
+      {
+        name: 'balcony',
+        label: 'Balconies',
+        type: 'select',
+        options: ['0', '1', '2', '3'],
+      },
+      {
+        name: 'area_type',
+        label: 'Area Type',
+        type: 'select',
+        // These strings must match exactly what was in your dataset
+        options: [
+          'Super built-up  Area',
+          'Built-up  Area',
+          'Plot  Area',
+          'Carpet  Area',
+        ],
+      },
+      {
+        name: 'availability',
+        label: 'Possession',
+        type: 'select',
+        options: ['Ready To Move', 'Under Construction'],
+      },
     ],
     basePrice: 9500000,
     unit: '₹',
