@@ -1,4 +1,4 @@
-# AssetAI – Full-Stack Setup Guide
+# AssetAI 
 ### ML-powered price predictor for Cars, Bikes, Houses, Plots, Gold, Silver, Platinum & Rentals
 
 ---
